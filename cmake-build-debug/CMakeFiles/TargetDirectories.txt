@@ -1,0 +1,4 @@
+/home/blackrat/CLionProjects/EmbeddedSoftwareLabor/cmake-build-debug/CMakeFiles/CDMA_Decoder.dir
+/home/blackrat/CLionProjects/EmbeddedSoftwareLabor/cmake-build-debug/CMakeFiles/Laufzeitoptimierung.dir
+/home/blackrat/CLionProjects/EmbeddedSoftwareLabor/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/blackrat/CLionProjects/EmbeddedSoftwareLabor/cmake-build-debug/CMakeFiles/rebuild_cache.dir
