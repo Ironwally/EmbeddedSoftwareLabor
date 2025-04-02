@@ -3,6 +3,8 @@
 //
 
 #include "cdma_decoder.h"
+
+#include <array>
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -27,6 +29,12 @@ string readSignalFile(const string& filename)
     return sum_signal;
 }
 
+void gold_code_generator()
+{
+    array<int, 10> input = {1,1,1,1,1,1,1,1,1,1};
+
+}
+
 void getSatelliteBits(const string& filename)
 {
     string sum_signal = readSignalFile(filename);
@@ -38,8 +46,9 @@ int main(const int argc, char* argv[])
     // argc: Number of command-line arguments
     // argv: Array of command-line arguments
 {
-    if (argc!=2) std::cout << "Error, Arguments must be exactly one";
+    if (argc!=2) { std::cout << "Error, Arguments must be exactly one"; return 1; }
     const string filename = argv[1];
+    cout << "Filename: " << filename;
     getSatelliteBits(filename);
 
     // format

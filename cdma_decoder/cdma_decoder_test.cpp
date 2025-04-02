@@ -4,7 +4,7 @@
 
 
 #include <gtest/gtest.h>
-#include "cdma_decoder.cpp"
+#include "cdma_decoder.h"
 
 TEST(cdma_decoder_import, textfile_import) {
 

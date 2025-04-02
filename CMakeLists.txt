@@ -5,13 +5,14 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(cdma_decoder)
 
-add_executable(CDMA_Decoder
+add_executable(CDMA_decoder
         cdma_decoder/cdma_decoder.cpp
         cdma_decoder/cdma_decoder.h
-        cdma_decoder/cdma_decoder_test.cpp)
+        )
 
-include_directories(Laufzeitoptimierung)
+include_directories(cdma_decoder)
 
-add_executable(Laufzeitoptimierung
-    Laufzeitoptimierung/Laufzeitoptimierung.cpp
-        Laufzeitoptimierung/Laufzeitoptimierung.h)
+add_executable(CDMA_decoder_test
+        cdma_decoder/cdma_decoder_test.cpp
+        cdma_decoder/cdma_decoder.h
+)
