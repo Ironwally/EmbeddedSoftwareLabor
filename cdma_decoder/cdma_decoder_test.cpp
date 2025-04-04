@@ -9,3 +9,8 @@
 TEST(cdma_decoder_import, textfile_import) {
 
 }
+
+TEST(cdma_decoder_test, gold_code_generator)
+{
+
+}
