@@ -4,7 +4,6 @@
 
 #include "cdma_decoder.h"
 
-#include <array>
 #include <iostream>
 #include <fstream>
 #include <climits>
@@ -12,7 +11,7 @@
 #include <sstream>
 using namespace std;
 
-string readSignalFile(const string& filename)
+auto readSignalFile(const string& filename) -> string
 {
     ifstream signalFile(filename); // Datei wird hier bereits geöffnet
 
@@ -36,7 +35,7 @@ string readSignalFile(const string& filename)
 }
 
 
-int xor_i(const vector<int>& input)
+auto xor_i(const vector<int>& input) -> int
 {
     int result = 0;
 
@@ -48,7 +47,7 @@ int xor_i(const vector<int>& input)
     return result;
 }
 
-void getSatelliteBits(const int satellite_id, const int sent_bit, const int delta)
+auto getSatelliteBits(const int satellite_id, const int sent_bit, const int delta) -> void
 {
     // Ausgabe der Satelliten mti ihrem gesendeten Bit
     // und dem Delta (Position im Summensignal,
@@ -56,7 +55,7 @@ void getSatelliteBits(const int satellite_id, const int sent_bit, const int delt
     cout << "\nSatellite " << satellite_id << " has sent bit " << sent_bit << " (delta = " << delta << ")";
 }
 
-void createPrintData(const string& sum_signal_str, const vector<vector<int>>& chip_sequences)
+auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& chip_sequences) -> void
 {
     // Summensignal von String zu Integer Vektor umwandeln
     vector<int> sum_signal;
@@ -69,28 +68,34 @@ void createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
     }
 
     const unsigned long signal_length = sum_signal.size();
+    constexpr short satellite_amount = 24;
 
-    // Für jeden Satelliten die (Kreuz)Korrelation berechnen
+    // Für jeden Satelliten die (Kreuz)Korrelation berechnen.
     // Also Bit Erkennung
-    // Schieben Chipsequenz über Summensignal und rechnen an jeder Position obs passt
-    // Also Summe der Produkte -> Hohe Werte = hohe Ähnlichkeit
-    for (int sat = 0; sat < 24; ++sat)
+    // Schieben Chipsequenz über Summensignal und rechnen an jeder Position obs passt.
+    // Also Summe der Produkte → Hohe Werte = hohe Ähnlichkeit
+    for (int sat = 0; sat < satellite_amount; ++sat)
     {
         const vector<int>& chip = chip_sequences[sat]; // Chipfolge für Satellit
-        int max_corr = INT_MIN; // Größte gefundene Korrelation
-        int delta = 0; // Position (Offset), an der Korrelation maximal war
+        int max_corr = 0; // Größte gefundene Korrelation
+        int delta = 0; // Position (Offset), an der Korrelation maximal war. (an der die Chipsequenz beginnt)
+        vector<int> chip_mapped(signal_length); // Chip 0/1 → -1/1 für Korrelation
 
-        for (int d = 0; d <= signal_length - 1023; ++d) // TODO Delta immer null
+        for (int i = 0; i < signal_length; ++i) {
+            chip_mapped[i] = chip[i] == 1 ? 1 : -1;
+        }
+
+        for (int d = 0; d <= signal_length; ++d)
         {
             int correlation = 0;
 
             // Korrelation zwischen Chips und Signal Ausschnitt berechnen
-            for (int i = 0; i < 1023; ++i)
+            for (int i = 0; i < signal_length; ++i)
             {
-                correlation += sum_signal[d + i] * chip[i];
+                correlation += sum_signal[d + i] * chip_mapped[i]; // (Skalarprodukt)
             }
 
-            // Maximum und Position speichern
+            // Maximum und Position speichern.
             // Also mit Betrag vergleichen (-1 und +1 beide relevant)
             if (abs(correlation) > abs(max_corr))
             {
@@ -99,20 +104,20 @@ void createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
             }
         }
 
-        // Aus Vorzeichen der höchsten Korrelation das gesendete Bit ableiten
-        // Also Positiv -> Bit = 1, Negativ -> Bit = 0
+        // Aus Vorzeichen der höchsten Korrelation das gesendete Bit ableiten.
+        // Also Positiv → Bit = 1, Negativ → Bit = 0
         const int sent_bit = max_corr > 0 ? 1 : 0;
         // Ausgabe der Satellitennummer mit dem gesendeten Bit und Delta Offset
         getSatelliteBits(sat + 1, sent_bit, delta);
     }
 }
 
-int get_sequence_bit(const vector<int>& variable_input, const vector<int>& fixed_input, const vector<int>& register_sum)
+auto get_sequence_bit(const vector<int>& variable_input, const vector<int>& fixed_input, const vector<int>& register_sum) -> int
 {
     return fixed_input.back() ^ (variable_input[register_sum[0] - 1] ^ variable_input[register_sum[1] - 1]);
 }
 
-void update_sequences(vector<int>& variable_input, vector<int>& fixed_input)
+auto update_sequences(vector<int>& variable_input, vector<int>& fixed_input) -> void
 {
     variable_input.insert(variable_input.begin(), xor_i({
                               variable_input[1], variable_input[2], variable_input[5],
@@ -123,7 +128,7 @@ void update_sequences(vector<int>& variable_input, vector<int>& fixed_input)
     fixed_input.pop_back();
 }
 
-vector<vector<int>> gold_code_generator(const vector<vector<int>>& satellite_register_sums)
+auto gold_code_generator(const vector<vector<int>>& satellite_register_sums) -> vector<vector<int>>
 {
     vector<vector<int>> chip_sequences; // end-output
 
@@ -147,7 +152,7 @@ vector<vector<int>> gold_code_generator(const vector<vector<int>>& satellite_reg
 }
 
 
-int main(const int argc, char* argv[])
+auto main(const int argc, char* argv[]) -> int
 // argc: Number of command-line arguments
 // argv: Array of command-line arguments
 {
