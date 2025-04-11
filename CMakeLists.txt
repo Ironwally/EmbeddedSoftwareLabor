@@ -4,15 +4,10 @@ project(EmbeddedSoftwareLabor)
 set(CMAKE_CXX_STANDARD 14)
 
 include_directories(cdma_decoder)
+find_package(benchmark REQUIRED)
 
-add_executable(CDMA_decoder
+add_executable(cdma_decoder
         cdma_decoder/cdma_decoder.cpp
-        cdma_decoder/cdma_decoder.h
-        )
-
-include_directories(cdma_decoder)
-
-add_executable(CDMA_decoder_test
-        cdma_decoder/cdma_decoder_test.cpp
-        cdma_decoder/cdma_decoder.h
 )
+
+target_link_libraries(cdma_decoder benchmark::benchmark benchmark::benchmark_main)

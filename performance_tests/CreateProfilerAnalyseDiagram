@@ -1,0 +1,11 @@
+# install perf
+# install FlameGraph
+# then
+g++ -O0 -g -o cdma_decoder cdma_decoder.cpp
+perf record -g ./cdma_decoder ../cdma_decoder/signal5.txt
+perf script > out.perf
+git clone https://github.com/brendangregg/FlameGraph.git
+cd FlameGraph
+./stackcollapse-perf.pl ../out.perf > out.folded
+./flamegraph.pl out.folded > perf_flamegraph.svg
+# then: View diagram in browser

@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="CDMA_decoder" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../cdma_decoder/signal5.txt" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="EmbeddedSoftwareLabor" TARGET_NAME="CDMA_decoder" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="EmbeddedSoftwareLabor" RUN_TARGET_NAME="CDMA_decoder">
-    <method v="2">
-      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-    </method>
-  </configuration>
-</component>

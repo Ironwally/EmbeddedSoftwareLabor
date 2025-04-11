@@ -1,16 +1,4 @@
 cmake-build-debug
-.idea/misc.xml
-.idea/modules.xml
-.idea/workspace.xml
-.idea/caches/
-.idea/libraries/
-.idea/artifacts/
-.idea/gradle.xml
-.idea/dictionaries
-.idea/vcs.xml
-.idea/sonarlint/
-.idea/sonarlint-caches/
-.idea/sonarlint-report-cache/
 *.iml
 *.hprof
 *.log
@@ -28,11 +16,9 @@ cmake-build-debug
 *.pyo
 *.pyd
 *.egg-info/
-__pycache__/
 .vscode/
 .cache/
 .idea_modules/
-.idea/
 target/
 out/
 build/
@@ -66,6 +52,18 @@ __pycache__/
 
 # JetBrains IDE files to ignore:
 .idea/
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/caches/
+.idea/libraries/
+.idea/artifacts/
+.idea/gradle.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/sonarlint/
+.idea/sonarlint-caches/
+.idea/sonarlint-report-cache/
 
 # Windows files to ignore:
 Thumbs.db

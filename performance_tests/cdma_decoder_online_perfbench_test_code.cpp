@@ -1,13 +1,11 @@
-//
-// Created by blackrat on 02.04.25.
-//
 #include <iostream>
 #include <fstream>
 #include <climits>
 #include <vector>
 #include <sstream>
-#include <chrono> // Laufzeitmessung
 
+// Laufzeitmessung
+#include <chrono>
 using namespace std;
 
 auto readSignalFile(const string& filename) -> string
@@ -55,7 +53,8 @@ auto getSatelliteBits(const int satellite_id, const int sent_bit, const int delt
 
 auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& chip_sequences) -> void
 {
-    auto const start = chrono::high_resolution_clock::now(); // Start timer
+  PROFILE_START("createPrintData");
+   auto const start = chrono::high_resolution_clock::now(); // Start timer
     // Summensignal von String zu Integer Vektor umwandeln
     vector<int> sum_signal;
     istringstream iss(sum_signal_str); // Stream aus dem Eingabe String
@@ -115,6 +114,7 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
     cout << "\n\ncreatePrintData executed in "
         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
         << " ms" << endl;
+    PROFILE_STOP("createPrintData");
 }
 
 auto get_sequence_bit(const vector<int>& variable_input, const vector<int>& fixed_input,
@@ -134,8 +134,10 @@ auto update_sequences(vector<int>& variable_input, vector<int>& fixed_input) -> 
     fixed_input.pop_back();
 }
 
+
 auto gold_code_generator(const vector<vector<int>>& satellite_register_sums) -> vector<vector<int>>
 {
+    PROFILE_START("gold_code_generator");
     auto const start = chrono::high_resolution_clock::now(); // Start timer
     vector<vector<int>> chip_sequences; // end-output
 
@@ -158,26 +160,26 @@ auto gold_code_generator(const vector<vector<int>>& satellite_register_sums) -> 
     cout << "\ngold_code_generator executed in "
         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
         << " ms" << endl;
-
+PROFILE_STOP("gold_code_generator");
     return chip_sequences;
 }
 
-auto main(const int argc, char* argv[]) -> int
+int main(const int argc, char* argv[])
     // argc: Number of command-line arguments
     // argv: Array of command-line arguments
 {
     auto const start = chrono::high_resolution_clock::now(); // Start timer
 
-    if (argc != 2)
-    {
-        std::cerr << "Error, Arguments must be exactly one";
+    //if (argc != 2)
+    //{
+    //    std::cerr << "Error, Arguments must be exactly one";
+//
+    //    return 1;
+    //}
 
-        return 1;
-    }
-
-    const string filename = argv[1];
-    cout << "Filename: " << filename;
-    const string sum_signal = readSignalFile(filename);
+    //const string filename = argv[1];
+    //cout << "Filename: " << filename;
+    const string sum_signal = "-2 -4 0 2 2 4 2 2 -2 4 -2 -2 -2 0 -2 -2 2 4 -2 -2 4 2 0 0 0 0 0 0 0 2 0 2 -2 4 -2 4 -2 0 0 2 0 -4 -2 -4 0 2 -2 -2 -4 0 2 0 0 0 0 2 2 0 -4 0 2 2 -4 2 -4 4 0 -2 -4 -4 0 -4 4 0 0 0 2 -4 0 0 2 0 2 2 2 0 2 0 0 0 0 -4 2 0 -2 -2 0 0 -2 4 -2 2 -2 2 0 -2 2 2 -2 -4 0 0 -2 0 2 -2 0 0 -2 4 -2 -2 0 -4 0 0 2 2 -2 4 0 2 2 2 0 0 -2 2 0 0 0 -4 0 -2 2 2 2 0 0 4 0 -4 2 -4 2 -4 -2 0 -4 -2 -2 2 -4 4 -4 -2 2 0 0 -4 2 0 0 2 0 -2 0 -2 -2 -2 2 0 0 0 -2 2 0 2 0 4 0 0 4 2 2 -2 0 -2 4 2 0 0 0 2 -2 0 0 -2 -2 4 0 -4 -2 0 2 0 0 0 2 2 -4 2 0 -2 0 0 2 0 -2 2 -2 -2 2 0 2 -2 -2 0 -2 2 0 0 2 2 0 2 0 0 0 2 0 0 0 -2 2 2 -2 2 4 -2 0 -2 -2 -2 4 -4 -2 2 2 2 2 0 -2 2 -4 0 0 2 0 -4 2 0 4 4 4 0 2 0 -4 0 -2 2 0 0 0 -2 0 0 2 2 -4 -2 2 0 0 0 0 -4 0 2 -2 0 2 2 2 2 2 2 2 2 -2 -2 2 -2 2 0 4 2 -2 0 -2 0 2 2 -2 -2 -2 -2 -2 0 0 2 0 0 -2 0 0 0 2 0 2 0 0 -4 -2 -4 0 4 -2 0 0 2 -2 0 0 0 -2 -2 0 -2 0 -2 0 0 2 0 -4 -2 0 2 0 4 0 0 -2 0 0 -2 2 -2 2 -2 2 -2 0 -2 -4 0 2 0 0 -2 -2 -2 2 0 0 -4 -4 0 -2 0 0 4 0 0 0 -2 0 4 0 2 2 0 2 0 0 0 2 0 0 2 -2 2 -4 0 -4 0 2 0 4 0 0 0 4 2 -2 0 0 0 4 2 2 0 0 -2 0 -2 4 -2 2 2 -2 2 2 -4 -2 0 0 -4 -2 -2 2 -2 -2 -2 2 -2 2 4 0 -2 -4 -2 -2 -2 -2 0 0 -2 0 0 -2 0 2 2 4 0 0 4 4 0 2 0 -2 2 0 -4 -2 -2 0 -4 0 0 0 2 2 2 2 -2 -4 2 4 0 0 0 -2 2 -2 2 -2 4 -2 0 -2 2 0 2 2 0 -4 -2 4 -4 2 4 2 0 2 0 2 0 -4 2 2 0 -2 -2 -2 -2 0 0 2 -2 0 -2 -2 0 0 0 0 -4 0 -4 -4 0 -2 -2 2 4 2 2 0 2 -4 0 0 0 0 2 -2 0 0 0 2 4 0 2 -4 0 0 0 0 0 2 -4 -2 0 2 0 0 4 2 0 4 2 -2 2 0 2 4 -2 4 -2 4 0 2 0 -4 0 -2 -2 2 0 0 0 -4 0 -2 2 0 2 4 2 -2 -2 0 0 0 -4 0 0 0 0 2 2 0 -2 -2 -4 2 0 0 4 -2 2 0 0 -2 -2 0 0 -2 4 0 0 0 -2 -2 4 -4 0 -2 2 2 2 0 2 0 2 0 0 -4 -4 0 0 0 0 0 0 4 0 -4 2 2 -2 -2 0 0 -2 0 0 0 0 0 0 0 2 -2 2 -4 4 2 -2 0 -4 -2 0 -2 -2 -4 0 2 0 4 -2 0 0 -4 4 -2 2 2 2 0 2 -2 2 2 0 2 0 -2 -2 -2 2 2 2 2 2 2 2 2 0 0 -2 0 2 -4 0 -2 -2 0 0 -2 -2 4 0 -2 0 0 -2 0 0 0 -4 0 -2 0 0 0 2 0 0 0 2 2 0 4 2 -2 -4 -2 -2 -4 0 -2 0 0 0 -4 0 0 -2 2 2 0 0 -2 2 -2 -2 0 -2 0 2 -2 2 0 -2 4 -2 -2 0 0 4 -2 2 0 -2 2 0 -4 -2 2 0 0 0 0 4 0 -2 0 -2 2 0 0 2 0 -2 -2 0 -2 -2 2 2 4 2 4 2 0 4 2 0 -2 2 -2 -4 0 2 -2 0 0 2 2 -2 0 0 2 -2 0 -4 -2 -2 2 0 0 4 0 0 2 0 -2 -2 0 0 0 0 -4 -2 -4 0 0 0 4 2 0 -2 2 0 0 2 0 -2 2 0 -2 0 -2 -2 0 -2 2 2 2 2 -4 0 -2 0 2 0 -2 0 0 2 2 -4 0 2 0 0 0 4 4 0 0 4 0 -4 0 2 2 2 4 -2 2 0 0 2 -2 0 2 -2 -2 -2 2 -4 -2 0 -2 0 4 0 2 0 0 -2 -2 -2 2 0 -4 2 0 2 2 0 2 2 0 2 0 0 0 2 2 2 -2 -2 -2 -2 0 0 0 4 0 4 2 -2 4 2 -2";
     const vector<vector<int>> satellite_register_sums = {
         {2, 6}, {3, 7}, {4, 8}, {5, 9}, {1, 9}, {2, 10}, {1, 8}, {2, 9}, {3, 10}, {2, 3}, {3, 4}, {5, 6},
         {6, 7}, {7, 8}, {8, 9}, {9, 10}, {1, 4}, {2, 5}, {3, 6}, {4, 7}, {5, 8}, {6, 9}, {1, 3}, {4, 6}
@@ -189,6 +191,13 @@ auto main(const int argc, char* argv[]) -> int
     cout << "\nmain executed in "
         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
         << " ms" << endl;
+
+  PROFILE_RUN_ALL(1000, 100,
+    gold_code_generator(satellite_register_sums);
+  );
+ PROFILE_RUN_ALL(1000, 100,
+    createPrintData(sum_signal, chip_sequences);
+  );
 
     return 0;
 }
