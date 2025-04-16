@@ -69,6 +69,10 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
     const unsigned long signal_length = sum_signal.size();
     constexpr short satellite_amount = 24;
 
+    int numberOfInterferingSatellites = 23;
+    float maxNoiceValue = 65.0;
+    float treshold = 823;
+
     // Für jeden Satelliten die (Kreuz)Korrelation berechnen.
     // Also Bit Erkennung
     // Schieben Chipsequenz über Summensignal und rechnen an jeder Position obs passt.
@@ -90,7 +94,7 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
             int correlation = 0;
 
             // Korrelation zwischen Chips und Signal Ausschnitt berechnen
-            for (int i = 0; i < signal_length; ++i)
+            for (int i = 0; i < signal_length - d; ++i)
             {
                 correlation += sum_signal[d + i] * chip_mapped[i]; // (Skalarprodukt)
             }
@@ -104,11 +108,14 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
             }
         }
 
-        // Aus Vorzeichen der höchsten Korrelation das gesendete Bit ableiten.
-        // Also Positiv → Bit = 1, Negativ → Bit = 0
-        const int sent_bit = max_corr > 0 ? 1 : 0;
-        // Ausgabe der Satellitennummer mit dem gesendeten Bit und Delta Offset
-        getSatelliteBits(sat + 1, sent_bit, delta);
+        if (abs(max_corr) >= treshold)
+        {
+            // Aus Vorzeichen der höchsten Korrelation das gesendete Bit ableiten.
+            const int sent_bit = max_corr > 0 ? 1 : 0;
+            // Ausgabe der Satellitennummer mit dem gesendeten Bit und Delta Offset
+            getSatelliteBits(sat + 1, sent_bit, delta);
+            //break;
+        }
     }
 
     auto const end = chrono::high_resolution_clock::now(); // End timer

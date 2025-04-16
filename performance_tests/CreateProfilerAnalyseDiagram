@@ -9,3 +9,10 @@ cd FlameGraph
 ./stackcollapse-perf.pl ../out.perf > out.folded
 ./flamegraph.pl out.folded > perf_flamegraph.svg
 # then: View diagram in browser
+
+
+# Build the project
+cmake -S . -B build
+cmake --build build --config Release
+# Run the program
+./build/cdma_decoder cdma_decoder/signal5.txt
