@@ -157,7 +157,7 @@ auto goldCodeGenerator(const vector<vector<int>> &satellite_register_sums) -> ve
     }
 
     auto const end = chrono::high_resolution_clock::now(); // End timer
-    cout << "\ngold_code_generator executed in "
+    cout << "\ngoldCodeGenerator executed in "
          << chrono::duration_cast<chrono::milliseconds>(end - start).count()
          << " ms" << endl;
 
