@@ -1,22 +1,14 @@
 Aufgabe 1
 ```
-goldCodeGenerator executed in 4 ms
-
-Satellite 8 has sent bit 1 (delta = 939)
-Satellite 13 has sent bit 1 (delta = 428)
-Satellite 19 has sent bit 0 (delta = 925)
-Satellite 21 has sent bit 1 (delta = 897)
-
-createPrintData executed in 93 ms
-
-main executed in 102 ms
+goldCodeGenerator executed in 2 ms
+createPrintData executed in 38 ms
+main executed in 41 ms
 ```
 
 Aufgabe 2
 
-
+siehe: profiler_vtune_flamegraph.png
 
 Aufgabe 3
 
 siehe: histogram.png, boxplot.png
-
