@@ -10,7 +10,7 @@
 
 using namespace std;
 
-auto readSignalFile(const string& filename) -> string
+auto readSignalFile(const string &filename) -> string
 {
     ifstream signalFile(filename); // Datei wird hier bereits geöffnet
 
@@ -33,7 +33,7 @@ auto readSignalFile(const string& filename) -> string
     return sum_signal;
 }
 
-auto xor_i(const vector<int>& input) -> int
+auto xorI(const vector<int> &input) -> int
 {
     int result = 0;
 
@@ -45,7 +45,7 @@ auto xor_i(const vector<int>& input) -> int
     return result;
 }
 
-auto getSatelliteBits(const int satellite_id, const int sent_bit, const int delta) -> void
+auto printData(const int satellite_id, const int sent_bit, const int delta) -> void
 {
     // Ausgabe der Satelliten mti ihrem gesendeten Bit
     // und dem Delta (Position im Summensignal,
@@ -53,7 +53,7 @@ auto getSatelliteBits(const int satellite_id, const int sent_bit, const int delt
     cout << "\nSatellite " << satellite_id << " has sent bit " << sent_bit << " (delta = " << delta << ")";
 }
 
-auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& chip_sequences) -> void
+auto createPrintData(const string &sum_signal_str, const vector<vector<int>> &chip_sequences) -> void
 {
     auto const start = chrono::high_resolution_clock::now(); // Start timer
     // Summensignal von String zu Integer Vektor umwandeln
@@ -68,9 +68,6 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
 
     const unsigned long signal_length = sum_signal.size();
     constexpr short satellite_amount = 24;
-
-    int numberOfInterferingSatellites = 23;
-    float maxNoiceValue = 65.0;
     float treshold = 823;
 
     // Für jeden Satelliten die (Kreuz)Korrelation berechnen.
@@ -79,10 +76,10 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
     // Also Summe der Produkte → Hohe Werte = hohe Ähnlichkeit
     for (int sat = 0; sat < satellite_amount; ++sat)
     {
-        const vector<int>& chip = chip_sequences[sat]; // Chipfolge für Satellit
-        int max_corr = 0; // Größte gefundene Korrelation
-        int delta = 0; // Position (Offset), an der Korrelation maximal war. (an der die Chipsequenz beginnt)
-        vector<int> chip_mapped(signal_length); // Chip 0/1 → -1/1 für Korrelation
+        const vector<int> &chip = chip_sequences[sat]; // Chipfolge für Satellit
+        int max_corr = 0;                              // Größte gefundene Korrelation
+        int delta = 0;                                 // Position (Offset), an der Korrelation maximal war. (an der die Chipsequenz beginnt)
+        vector<int> chip_mapped(signal_length);        // Chip 0/1 → -1/1 für Korrelation
 
         for (int i = 0; i < signal_length; ++i)
         {
@@ -94,9 +91,9 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
             int correlation = 0;
 
             // Korrelation zwischen Chips und Signal Ausschnitt berechnen
-            for (int i = 0; i < signal_length - d; ++i)
+            for (int i = 0; i < signal_length; ++i)
             {
-                correlation += sum_signal[d + i] * chip_mapped[i]; // (Skalarprodukt)
+                correlation += sum_signal[(d + i) % 1023] * chip_mapped[i]; // (Skalarprodukt)
             }
 
             // Maximum und Position speichern.
@@ -111,51 +108,49 @@ auto createPrintData(const string& sum_signal_str, const vector<vector<int>>& ch
         if (abs(max_corr) >= treshold)
         {
             // Aus Vorzeichen der höchsten Korrelation das gesendete Bit ableiten.
+            // Also Positiv → Bit = 1, Negativ → Bit = 0
             const int sent_bit = max_corr > 0 ? 1 : 0;
             // Ausgabe der Satellitennummer mit dem gesendeten Bit und Delta Offset
-            getSatelliteBits(sat + 1, sent_bit, delta);
-            //break;
+            printData(sat + 1, sent_bit, delta);
         }
     }
 
     auto const end = chrono::high_resolution_clock::now(); // End timer
     cout << "\n\ncreatePrintData executed in "
-        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-        << " ms" << endl;
+         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+         << " ms" << endl;
 }
 
-auto get_sequence_bit(const vector<int>& variable_input, const vector<int>& fixed_input,
-                      const vector<int>& register_sum) -> int
+auto getSequenceBit(const vector<int> &variable_input, const vector<int> &fixed_input,
+                    const vector<int> &register_sum) -> int
 {
     return fixed_input.back() ^ (variable_input[register_sum[0] - 1] ^ variable_input[register_sum[1] - 1]);
 }
 
-auto update_sequences(vector<int>& variable_input, vector<int>& fixed_input) -> void
+auto updateSequences(vector<int> &variable_input, vector<int> &fixed_input) -> void
 {
-    variable_input.insert(variable_input.begin(), xor_i({
-                              variable_input[1], variable_input[2], variable_input[5],
-                              variable_input[7], variable_input[8], variable_input[9]
-                          }));
+    variable_input.insert(variable_input.begin(), xorI({variable_input[1], variable_input[2], variable_input[5],
+                                                        variable_input[7], variable_input[8], variable_input[9]}));
     variable_input.pop_back();
     fixed_input.insert(fixed_input.begin(), fixed_input[2] ^ fixed_input.back());
     fixed_input.pop_back();
 }
 
-auto gold_code_generator(const vector<vector<int>>& satellite_register_sums) -> vector<vector<int>>
+auto goldCodeGenerator(const vector<vector<int>> &satellite_register_sums) -> vector<vector<int>>
 {
     auto const start = chrono::high_resolution_clock::now(); // Start timer
-    vector<vector<int>> chip_sequences; // end-output
+    vector<vector<int>> chip_sequences;                      // end-output
 
-    for (const auto& register_sum : satellite_register_sums)
+    for (const auto &register_sum : satellite_register_sums)
     {
         vector<int> chip_sequence = {};
         vector<int> variable_input(10, 1); // variable input sequence
-        vector<int> fixed_input(10, 1); // fixed input sequence
+        vector<int> fixed_input(10, 1);    // fixed input sequence
 
         for (int i = 0; i < 1023; i++)
         {
-            chip_sequence.push_back(get_sequence_bit(variable_input, fixed_input, register_sum));
-            update_sequences(variable_input, fixed_input);
+            chip_sequence.push_back(getSequenceBit(variable_input, fixed_input, register_sum));
+            updateSequences(variable_input, fixed_input);
         }
 
         chip_sequences.emplace_back(chip_sequence);
@@ -163,15 +158,15 @@ auto gold_code_generator(const vector<vector<int>>& satellite_register_sums) -> 
 
     auto const end = chrono::high_resolution_clock::now(); // End timer
     cout << "\ngold_code_generator executed in "
-        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-        << " ms" << endl;
+         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+         << " ms" << endl;
 
     return chip_sequences;
 }
 
-auto main(const int argc, char* argv[]) -> int
-    // argc: Number of command-line arguments
-    // argv: Array of command-line arguments
+auto main(const int argc, char *argv[]) -> int
+// argc: Number of command-line arguments
+// argv: Array of command-line arguments
 {
     auto const start = chrono::high_resolution_clock::now(); // Start timer
 
@@ -186,16 +181,14 @@ auto main(const int argc, char* argv[]) -> int
     cout << "Filename: " << filename;
     const string sum_signal = readSignalFile(filename);
     const vector<vector<int>> satellite_register_sums = {
-        {2, 6}, {3, 7}, {4, 8}, {5, 9}, {1, 9}, {2, 10}, {1, 8}, {2, 9}, {3, 10}, {2, 3}, {3, 4}, {5, 6},
-        {6, 7}, {7, 8}, {8, 9}, {9, 10}, {1, 4}, {2, 5}, {3, 6}, {4, 7}, {5, 8}, {6, 9}, {1, 3}, {4, 6}
-    };
+        {2, 6}, {3, 7}, {4, 8}, {5, 9}, {1, 9}, {2, 10}, {1, 8}, {2, 9}, {3, 10}, {2, 3}, {3, 4}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {9, 10}, {1, 4}, {2, 5}, {3, 6}, {4, 7}, {5, 8}, {6, 9}, {1, 3}, {4, 6}};
 
-    const vector<vector<int>> chip_sequences = gold_code_generator(satellite_register_sums);
+    const vector<vector<int>> chip_sequences = goldCodeGenerator(satellite_register_sums);
     createPrintData(sum_signal, chip_sequences);
     auto const end = chrono::high_resolution_clock::now(); // End timer
     cout << "\nmain executed in "
-        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-        << " ms" << endl;
+         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+         << " ms" << endl;
 
     return 0;
 }
