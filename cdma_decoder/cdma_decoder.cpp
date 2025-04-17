@@ -12,6 +12,13 @@ using namespace std;
 
 auto readSignalFile(const string &filename) -> string
 {
+    // Einlesen des Summensignals aus der Datei
+    // und Umwandeln in einen Vektor von Integern
+    // (Die Datei wird hier geöffnet)
+    // Die Datei muss im Format 0/1 sein, also nur 0 und 1 enthalten.
+    // Zeilenweise wird die Datei eingelesen und in den Vektor geschrieben.
+    // Am Ende wird der Vektor zurückgegeben.
+
     ifstream signalFile(filename); // Datei wird hier bereits geöffnet
 
     if (!signalFile)
