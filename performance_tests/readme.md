@@ -1,12 +1,13 @@
 # Create FlameGraph
 - install perf
+`sudo apt install linux-tools-generic`
 - build the project
 - run script:
 ```
 perf record -g ./cdma_decoder ../cdma_decoder/signal5.txt
 perf script > out.perf
 git clone https://github.com/brendangregg/FlameGraph.git
-cd FlameGraph
+cd FlameGraphsudo apt
 ./stackcollapse-perf.pl ../out.perf > out.folded
 ./flamegraph.pl out.folded > perf_flamegraph.svg
 ```
