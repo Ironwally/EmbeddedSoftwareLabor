@@ -1,8 +1,17 @@
 Aufgabe 1
+
+Vor der Optimierung:
 ```
 goldCodeGenerator executed in 2 ms
 createPrintData executed in 38 ms
 main executed in 41 ms
+```
+
+Nach der Optimierung:
+```
+goldCodeGenerator executed in 0 ms
+createPrintData executed in 5 ms
+main executed in 6 ms
 ```
 
 Aufgabe 2
@@ -11,4 +20,8 @@ siehe: profiler_vtune_flamegraph.png
 
 Aufgabe 3
 
+Vor der Optimierung:
 siehe: histogram.png, boxplot.png
+
+Nach der Optmierung:
+siehe: optimiertes_histogram.png, optimiertes_boxplot.png
