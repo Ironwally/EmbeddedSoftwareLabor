@@ -15,7 +15,7 @@ cd FlameGraphsudo apt
 
 # Build the project
 ```
-cmake -S . -B build -DCMAKE_CXX_FLAGS="-O3" # for Debug Symbols: -g
+cmake -S . -B build -DCMAKE_CXX_FLAGS="-O3" # for Debug Symbols: -g, additional optimizing flags: -march=native -mavx -msse4.2
 cmake --build build --config Release
 ```
 # Run the program
